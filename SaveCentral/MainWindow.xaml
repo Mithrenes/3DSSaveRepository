@@ -31,7 +31,7 @@
                         <Label x:Name="lblIsServerOnline" Grid.Row="0" Grid.Column="0" Content="Database" Padding="0,0,0,0"/>
                         <Ellipse x:Name="EllipseIsServerOnline" Grid.Row="0" Grid.Column="1" Width="18" Height="18"/>
                         <Label x:Name="lblIsMegaOnline" Grid.Row="1" Grid.Column="0" Content="Storage" Padding="0,0,0,0"/>
-                        <Ellipse x:Name="EllipseIsMegaOnline" Grid.Row="1" Grid.Column="1" Width="18" Height="18"/>
+                        <Ellipse x:Name="EllipseIsMegaOnline" Grid.Row="1" Grid.Column="1" Width="18" Height="18"/> 
                     </Grid>
                 </Grid>
             </Grid>
@@ -551,7 +551,7 @@
                         <GroupBox.Header>
                             <WrapPanel>
                                 <CheckBox IsChecked="False" VerticalAlignment="Center" x:Name="chkHeader" />
-                                <Label Content="Crear Cuenta" FontWeight="Bold" />
+                                <Label Content="Create account" FontWeight="Bold" />
                             </WrapPanel>
                         </GroupBox.Header>
                         <Grid VerticalAlignment="Top">
