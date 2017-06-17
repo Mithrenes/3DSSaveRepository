@@ -1,0 +1,583 @@
+﻿<Window x:Class="SaveCentral.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:properties="clr-namespace:SaveCentral.Properties"
+        xmlns:local="clr-namespace:SaveCentral"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="760" Width="750">
+    <Grid>
+        <DockPanel HorizontalAlignment="Left"  LastChildFill="False" Margin="10,10,0,0" VerticalAlignment="Stretch"  >
+            <Grid DockPanel.Dock="Top" Height="40">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Label x:Name="lblSessionStatus" MinWidth="176" Grid.Column="0" Grid.Row="0" Padding="5,3,0,0"/>
+                    <Grid Width="100" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="0" Margin="5,0,0,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition></ColumnDefinition>
+                            <ColumnDefinition Width="25"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label x:Name="lblIsServerOnline" Grid.Row="0" Grid.Column="0" Content="Base de datos" Padding="0,0,0,0"/>
+                        <Ellipse x:Name="EllipseIsServerOnline" Grid.Row="0" Grid.Column="1" Width="18" Height="18"/>
+                        <Label x:Name="lblIsMegaOnline" Grid.Row="1" Grid.Column="0" Content="Servidor" Padding="0,0,0,0"/>
+                        <Ellipse x:Name="EllipseIsMegaOnline" Grid.Row="1" Grid.Column="1" Width="18" Height="18"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid DockPanel.Dock="Left" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TabControl x:Name="TabSaves" Grid.Column="0" Grid.Row="0" Width="700" IsEnabled="False" SelectionChanged="TabControl_SelectionChanged">
+                    <TabItem Header="Download Saves" x:Name="TabItemDS">
+                        <Grid x:Name="gridDownloads">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Expander IsExpanded="False" Header="Search Filter">
+                                    <Border BorderBrush="Gray" BorderThickness="0.5">
+                                        <Grid Margin="3,3,3,3">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"></RowDefinition>
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid Grid.Column="0" Grid.Row="0"> 
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"></RowDefinition>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                    <ColumnDefinition Width="Auto" MinWidth="70"></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Label  Content="Region:" Padding="0,0,0,0" Margin="5,0,10,0" Grid.Row="0" Grid.Column="0" Height="20" />
+                                                <ComboBox x:Name="cmbFilterSaveByRegion" Grid.Row="0" Grid.Column="1"  SelectedValuePath="Content" Padding="5,0,0,0" SelectionChanged="cmbFilterSaveByRegion_SelectionChanged" Margin="0,0,1,0" Height="20" VerticalAlignment="Top">
+                                                    <ComboBoxItem Content="ALL"/>
+                                                    <ComboBoxItem Content="USA"/>
+                                                    <ComboBoxItem Content="EUR" />
+                                                    <ComboBoxItem Content="JPN" />
+                                                </ComboBox>
+                                            </Grid>
+                                            <Grid Grid.Column="1" Grid.Row="0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"></RowDefinition>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Label  Content="Game name:" Padding="0,0,0,0" Margin="5,0,10,0" Grid.Row="0" Grid.Column="0" Height="20" />
+                                                <TextBox x:Name="txtFilterSearch" Grid.Row="0" Grid.Column="1" TextChanged="txtFilterSearch_TextChanged" />
+                                            </Grid>
+                                        </Grid>
+                                        
+                                    </Border>
+                                </Expander>
+                            </Grid>
+                            <Grid Grid.Column="0" Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Label Content="Saves to download:" FontWeight="Bold" Height="25" Grid.Row="0" Grid.Column="0"   />
+                                <ListBox Name="lbGameSavesToDownload"  HorizontalContentAlignment="Stretch" Panel.ZIndex="3" SelectionChanged="lbGameSavesToDownload_SelChanged" Margin="5,0,0,0" Grid.Row="1" Grid.Column="0"  >
+                                    <ListBox.ToolTip>
+                                        <ToolTip>
+                                            <TextBlock Text="Double click to download." />
+                                        </ToolTip>
+                                    </ListBox.ToolTip>
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListBoxItem}">
+                                            <EventSetter Event="MouseDoubleClick" Handler="lbGameSavesToDownload_DoubleClick" />
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="28" />
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Image Width="25" Grid.Column="0" RenderOptions.BitmapScalingMode="Fant" Source = "{Binding ImageSource}" />
+                                                <StackPanel Grid.Column="1">
+                                                    <Label Content="{Binding Title}" Margin="0,0,0,0" Padding="5,0,0,0" Height="19" />
+                                                    <Label  Content="{Binding GameName}" Margin="0,0,0,0"  Padding="5,0,0,0" FontSize="9" Height="16"/>
+
+                                                </StackPanel>
+
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                            <Grid Grid.Column="1" Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="141*"></RowDefinition>
+                                    <RowDefinition Height="132*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Label Content="Files included in selected save:" FontWeight="Bold" Height="25" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" />
+                                <ListBox Name="lbFilesIncludedInDownload"  HorizontalContentAlignment="Stretch" Panel.ZIndex="3" Margin="5,0,5,0"  Grid.Row="1" Grid.Column="0">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="25" />
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Image Width="25" RenderOptions.BitmapScalingMode="Fant" Source = "{Binding ImageSource}" />
+                                                <Label Grid.Column="1" Content="{Binding GameName}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <StackPanel Grid.Row="3" Grid.Column="0">
+                                    <StackPanel >
+                                        <Label Content="Title:"/>
+                                        <TextBox x:Name="txtDLSaveTitle" Height="25" Margin="5,0,5,0" IsReadOnly="True"/>
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <Label Content="Description:" HorizontalAlignment="Left" Grid.Column="0" />
+                                        <TextBox x:Name="txtDLSaveDescription" Grid.Column="1" Height="70" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Margin="5,0,5,0" IsReadOnly="True"/>
+                                    </StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <UniformGrid Grid.Row="0" Grid.Column="0" Rows="2">
+                                            <Label Content="Region:" />
+                                            <ComboBox x:Name="cmbDLSaveRegion" SelectedValuePath="Content" Margin="5,0,0,0" IsEnabled="False">
+                                                <ComboBoxItem Content="USA" />
+                                                <ComboBoxItem Content="EUR" />
+                                                <ComboBoxItem Content="JPN" />
+                                            </ComboBox>
+                                        </UniformGrid>
+                                        <UniformGrid Grid.Row="0" Grid.Column="1" Rows="2">
+                                            <Label Content="Device: " />
+                                            <TextBox x:Name="txtDLSaveType" Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center"/>
+                                        </UniformGrid>
+                                        <UniformGrid Grid.Row="0" Grid.Column="2" Rows="2">
+                                            <Label Content="Has ExtData?: " />
+                                            <TextBox x:Name="txtDLHasExtData" Margin="5,0,5,0" IsReadOnly="True" VerticalContentAlignment="Center"/>
+                                        </UniformGrid>
+                                    </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" MinWidth="133" />
+                                        </Grid.ColumnDefinitions>
+                                        <UniformGrid Rows="2" Grid.Column="0" Margin="5,0,0,0">
+                                            <Label Content="Downloads: " Grid.Column="0"  />
+                                            <TextBox x:Name="txtDLCount" IsReadOnly="True" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" />
+                                        </UniformGrid >
+                                        <UniformGrid Rows="2" Grid.Column="1" Margin="5,0,0,0">
+                                            <Label Content="Uploader: " />
+                                            <TextBox x:Name="txtDLUploader" IsReadOnly="True" VerticalContentAlignment="Center" />
+                                        </UniformGrid>
+                                    </Grid>
+                                        
+                                        
+                                </StackPanel>
+                            </Grid >
+
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Upload Save" x:Name="TabItemUS">
+                        <Grid x:Name="gridUpload">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Column="0" Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Label Content="Saves in SD Card:" FontWeight="Bold" Height="25" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" />
+                                <ListBox Name="lbGameSavesInDevice"  HorizontalContentAlignment="Stretch" Panel.ZIndex="3" SelectionChanged="lbGameSavesInDevice_SelChanged" Margin="5,0,0,0" Grid.Row="1" Grid.Column="0">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="25" />
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Image Width="25" Grid.Column="0" RenderOptions.BitmapScalingMode="Fant" Source = "{Binding ImageSource}" />
+                                                <Label Grid.Column="1" Content="{Binding GameName}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                            <Grid Grid.Column="1" Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="141*"></RowDefinition>
+                                    <RowDefinition Height="132*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Label Content="Save Slots:" FontWeight="Bold" Height="25" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" />
+                                <ListBox Name="lbSaveSlotsInGameFolder"  HorizontalContentAlignment="Stretch" Panel.ZIndex="3" SelectionChanged="lbSaveSlotsInGameFolder_SelChanged" Margin="5,0,5,0"  Grid.Row="1" Grid.Column="0">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="25" />
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Image Width="25" RenderOptions.BitmapScalingMode="Fant" Source = "{Binding ImageSource}" />
+                                                <Label Grid.Column="1" Content="{Binding GameName}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <StackPanel Grid.Row="2" Grid.Column="0">
+                                    <StackPanel >
+                                        <Label Content="Title:"/>
+                                        <TextBox x:Name="txtSaveTitle" Height="25" Margin="5,0,5,0"/>
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <Label Content="Description:" HorizontalAlignment="Left" Grid.Column="0" />
+                                        <TextBox x:Name="txtSaveDescription" Grid.Column="1" Height="70" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Margin="5,0,5,0"/>
+                                    </StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <UniformGrid Grid.Row="0" Grid.Column="0" Rows="2">
+                                            <Label Content="Region:" />
+                                            <ComboBox x:Name="cmbSaveRegion" SelectedValuePath="Content" SelectionChanged="cmbSaveRegion_SelectionChanged" Margin="5,0,0,0">
+                                                <ComboBoxItem Content="USA" />
+                                                <ComboBoxItem Content="EUR" />
+                                                <ComboBoxItem Content="JPN" />
+                                            </ComboBox>
+                                        </UniformGrid>
+                                        <UniformGrid Grid.Row="0" Grid.Column="1" Rows="2">
+                                            <Label Content="Device: " />
+                                            <TextBox x:Name="txtSaveType" Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center"/>
+                                        </UniformGrid>
+                                        <UniformGrid Grid.Row="0" Grid.Column="2" Rows="2">
+                                            <Label Content="Has ExtData?: " />
+                                            <TextBox x:Name="txtHasExtData" Margin="5,0,5,0" IsReadOnly="True" VerticalContentAlignment="Center"/>
+                                        </UniformGrid>
+                                        <Button x:Name="btnUploadSave" Click="btnUploadSave_Click" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Content="Upload Save" Height="40" Margin="5,20,5,0" />
+                                    </Grid>
+                                </StackPanel>
+                            </Grid >
+
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="My Uploads" x:Name="TabItemMS">
+                        <Grid x:Name="gridMyUploads">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Column="0" Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Label Content="Saves I have uploaded:" FontWeight="Bold" Height="25" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" />
+                                <ListBox Name="lbMyGameSaves"  HorizontalContentAlignment="Stretch" Panel.ZIndex="3" SelectionChanged="lbMyGameSaves_SelChanged" Margin="5,0,0,0" Grid.Row="1" Grid.Column="0"  >
+                                    <ListBox.ToolTip>
+                                        <ToolTip>
+                                            <TextBlock Text="Right click to delete." />
+                                        </ToolTip>
+                                    </ListBox.ToolTip>
+                                    <ListBox.Resources>
+
+                                        <!--Defines a context menu-->
+                                        <ContextMenu x:Key="MyElementMenu">
+                                            <MenuItem Header="Delete" Click="MenuItemDelete_Click"/>
+                                        </ContextMenu>
+
+                                        <!--Sets a context menu for each ListBoxItem in the current ListBox-->
+                                        <Style TargetType="{x:Type ListBoxItem}">
+                                            <Setter Property="ContextMenu" Value="{StaticResource MyElementMenu}"/>
+                                        </Style>
+
+                                    </ListBox.Resources>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="28" />
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Image Width="25" Grid.Column="0" RenderOptions.BitmapScalingMode="Fant" Source = "{Binding ImageSource}" />
+                                                <StackPanel Grid.Column="1">
+                                                    <Label Content="{Binding Title}" Margin="0,0,0,0" Padding="5,0,0,0" Height="19" />
+                                                    <Label  Content="{Binding GameName}" Margin="0,0,0,0"  Padding="5,0,0,0" FontSize="9" Height="16"/>
+
+                                                </StackPanel>
+
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                            <Grid Grid.Column="1" Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="141*"></RowDefinition>
+                                    <RowDefinition Height="132*"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Label Content="Files included in selected save:" FontWeight="Bold" Height="25" VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" />
+                                <ListBox Name="lbMySaveSlotsInGameFolder"  HorizontalContentAlignment="Stretch" Panel.ZIndex="3" Margin="5,0,5,0"  Grid.Row="1" Grid.Column="0">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="25" />
+                                                    <ColumnDefinition/>
+                                                </Grid.ColumnDefinitions>
+                                                <Image Width="25" RenderOptions.BitmapScalingMode="Fant" Source = "{Binding ImageSource}" />
+                                                <Label Grid.Column="1" Content="{Binding GameName}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <StackPanel Grid.Row="2" Grid.Column="0">
+                                    <StackPanel >
+                                        <Label Content="Title:"/>
+                                        <TextBox x:Name="txtMUSaveTitle" Height="25" Margin="5,0,5,0"/>
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <Label Content="Description:" HorizontalAlignment="Left" Grid.Column="0" />
+                                        <TextBox x:Name="txtMUSaveDescription" Grid.Column="1" Height="70" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Margin="5,0,5,0"/>
+                                    </StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="80" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
+                                        <UniformGrid Grid.Row="0" Grid.Column="0" Rows="2">
+                                            <Label Content="Region:" />
+                                            <ComboBox x:Name="cmbMUSaveRegion" SelectedValuePath="Content" SelectionChanged="cmbMUSaveRegion_SelectionChanged" Margin="5,0,0,0">
+                                                <ComboBoxItem Content="USA" />
+                                                <ComboBoxItem Content="EUR" />
+                                                <ComboBoxItem Content="JPN" />
+                                            </ComboBox>
+                                        </UniformGrid>
+                                        <UniformGrid Grid.Row="0" Grid.Column="1" Rows="2">
+                                            <Label Content="Device: " />
+                                            <TextBox x:Name="txtMUSaveType" Margin="5,0,0,0" IsReadOnly="True" VerticalContentAlignment="Center"/>
+                                        </UniformGrid>
+                                        <UniformGrid Grid.Row="0" Grid.Column="2" Rows="2">
+                                            <Label Content="Has ExtData?: " />
+                                            <TextBox x:Name="txtMUHasExtData" Margin="5,0,5,0" IsReadOnly="True" VerticalContentAlignment="Center"/>
+                                        </UniformGrid>
+                                        <Button x:Name="btnUpdateMySaves" Click="btnUpdateMySaves_Click" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Content="Update Info" Height="40" Margin="5,20,5,0" />
+                                    </Grid>
+                                </StackPanel>
+                            </Grid >
+
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+                <UniformGrid Columns="1" Rows="2" Grid.Column="0" Grid.Row="1" Height="45" VerticalAlignment="Bottom" Margin="0,0,0,5">
+                    <Label x:Name="lblNotifyProgress" Padding="0,0,0,0"></Label>
+                    <ProgressBar x:Name="PBNotifyProgress" Maximum="100" Minimum="0" Padding="0,0,0,0" Height="20"></ProgressBar>
+                </UniformGrid>
+            </Grid>
+
+        </DockPanel>
+
+
+        <StackPanel Panel.ZIndex="2" Name="pnlRightMenu" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,-300,0">
+            <Grid>
+                <Button Name="btnRightMenuHide" Width="100" Height="30" Click="btnRightMenuHide_Click" Content="Config/Login" VerticalAlignment="Top" Margin="122,100,-70,0" Visibility="Hidden">
+                    <Button.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="-90"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Button.RenderTransform>
+                </Button>
+                <Button Name="btnRightMenuShow" Width="100" Height="30" Click="btnRightMenuShow_Click" Content="Config/Login" VerticalAlignment="Top" Margin="122,100,-70,0"  >
+                    <Button.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform/>
+                            <RotateTransform Angle="-90"/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Button.RenderTransform>
+                </Button>
+            </Grid>
+            <Border BorderBrush="#AF1719" BorderThickness="1" Width="300" Background="#FFE8E5E5" >
+                <Grid>
+                    <GroupBox x:Name="groupBox" Header="Login" HorizontalAlignment="Left" Margin="10,4,0,0" VerticalAlignment="Top" Width="278" Height="202">
+                        <Grid>
+                            <Label x:Name="labelLogin" HorizontalAlignment="Center" Margin="0,10,0,0" VerticalAlignment="Top" Width="162" Height="28" >
+                                <TextBlock TextWrapping="Wrap" Text="User/Email" TextAlignment="Center" Width="154" Height="22"/>
+                            </Label>
+
+                            <TextBox x:Name="Usertxt" HorizontalAlignment="Center" Height="23" Margin="0,38,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="164" TextAlignment="Center" Text="{Binding Path=User,Source={x:Static properties:Settings.Default}}"/>
+                            <Label x:Name="labelPaasword" HorizontalAlignment="Center" Margin="0,68,0,0" VerticalAlignment="Top" Width="164" Height="28" Content="Password" HorizontalContentAlignment="Center" />
+
+                            <PasswordBox x:Name="Passwordtxt" HorizontalAlignment="Center" Height="23" Margin="0,96,0,0" VerticalAlignment="Top" Width="164" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+                            <CheckBox x:Name="ChkBoxRememberAccount" IsChecked="True" HorizontalAlignment="Center" Content="Remember login" Margin="74,124,74,38" Checked="ChkBoxRememberAccount_CheckedChanged" Unchecked="ChkBoxRememberAccount_CheckedChanged" Width="118">
+                                <CheckBox.ToolTip>
+                                    <ToolTip>
+                                        <StackPanel>
+                                            <TextBlock>If checked you will start session automatically.</TextBlock>
+                                        </StackPanel>
+                                    </ToolTip>
+                                </CheckBox.ToolTip>
+                            </CheckBox>
+                            <Button x:Name="btnLogIn" Content="LogIn" Margin="76,147,76,0" Click="btnLogIn_Click"/>
+                            <Button x:Name="btnLogOut" Content="LogOut" Margin="76,147,76,0" Click="btnLogOut_Click" Visibility="Hidden"/>
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Margin="10,211,10,0" VerticalAlignment="Top" MinHeight="250" Height="258"
+                              Header="3DS Connection Settings">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"></RowDefinition>
+                                <RowDefinition Height="25"></RowDefinition>
+                                <RowDefinition Height="25"></RowDefinition>
+                                <RowDefinition Height="25"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <TextBlock  Grid.Row="0" VerticalAlignment="Center">Write your 3DS IP as shown on FTP:</TextBlock>
+                            <TextBox x:Name="txtDeviceIPAddress" IsReadOnly="False" Grid.Column="1" Grid.Row="1" Text="{Binding Path=DeviceIPAddress,Source={x:Static properties:Settings.Default}}">
+                                <TextBox.ToolTip>
+                                    <ToolTip>
+                                        <StackPanel>
+                                            <TextBlock>Your 3DS IP Address.</TextBlock>
+                                        </StackPanel>
+                                    </ToolTip>
+                                </TextBox.ToolTip>
+                            </TextBox>
+                            <CheckBox x:Name="chkRememberDeviceIP" Grid.Row="2" Grid.Column="0" Content="Remember Device IP" Checked="chkRememberDeviceIP_Checked" Unchecked="chkRememberDeviceIP_Checked"></CheckBox>
+                            <Button x:Name="btnFTPConnect" Grid.Row="3" Content="Connect" Click="btnFTPConnect_Click"/>
+                        </Grid>
+                    </GroupBox>
+                    <!-- Change Heigth to 30 when done with testing -->
+                    <GroupBox Padding="0,0,0,10" VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="30" Width="278" CheckBox.Checked="CheckBox_Checked" CheckBox.Unchecked="CheckBox_Unchecked" BorderThickness="0" Margin="10,0">
+                        <GroupBox.Resources>
+                            <Style TargetType="GroupBox">
+                                <Style.Triggers>
+                                    <EventTrigger RoutedEvent="CheckBox.Unchecked">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetProperty="Height" Duration="0:0:.2"   />
+                                                <ThicknessAnimation Storyboard.TargetProperty = "BorderThickness" Duration="0:0:0.200" To="0, 0, 0, 0"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                    <EventTrigger RoutedEvent="CheckBox.Checked">
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Storyboard.TargetProperty="Height" Duration="0:0:.2" To="220"/>
+                                                <ThicknessAnimation Storyboard.TargetProperty = "BorderThickness" Duration="0:0:0.200" To="1, 1, 1, 1"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </GroupBox.Resources>
+                        <GroupBox.Header>
+                            <WrapPanel>
+                                <CheckBox IsChecked="False" VerticalAlignment="Center" x:Name="chkHeader" />
+                                <Label Content="Crear Cuenta" FontWeight="Bold" />
+                            </WrapPanel>
+                        </GroupBox.Header>
+                        <Grid VerticalAlignment="Top">
+                            <UniformGrid Columns="1">
+                                <TextBlock Height="20" VerticalAlignment="Center">Nombre de Usuario:</TextBlock>
+                                <TextBox x:Name="txtNewNomUser" Height="25" VerticalAlignment="Top"></TextBox>
+                                <TextBlock Height="20" VerticalAlignment="Center">Email:</TextBlock>
+                                <TextBox x:Name="txtNewEmail" Height="25" VerticalAlignment="Top" ></TextBox>
+                                <TextBlock Height="20" VerticalAlignment="Center">Contraseña:</TextBlock>
+                                <PasswordBox x:Name="txtNewPassword" Height="25" VerticalAlignment="Top" ></PasswordBox>
+                                <Button x:Name="btnCreateAccount" Content="Crear Cuenta" Click="btnCreateAccount_Click"></Button>
+                            </UniformGrid>
+
+                        </Grid>
+                    </GroupBox>
+                </Grid>
+            </Border>
+        </StackPanel>
+    </Grid>
+
+    <Window.Resources>
+        <Storyboard x:Key="sbShowRightMenu" >
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,-300,0" To="0,0,0,0" DecelerationRatio=".9" Duration="0:0:1" />
+        </Storyboard>
+        <Storyboard x:Key="sbHideRightMenu">
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="0,0,-300,0" AccelerationRatio=".9" Duration="0:0:1" />
+        </Storyboard>
+    </Window.Resources>
+</Window>
