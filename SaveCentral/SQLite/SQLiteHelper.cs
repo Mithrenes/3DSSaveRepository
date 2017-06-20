@@ -309,13 +309,13 @@ namespace SaveCentral.SQLite
             foreach (KeyValuePair<String, String> val in data)
             {
                 columns += String.Format(" {0},", val.Key.ToString());
-                values += String.Format("CASE WHEN '{0}' = '' THEN null ELSE '{0}' END,", val.Value);
+                values += String.Format("@{0},", val.Key.ToString());
             }
             columns = columns.Substring(0, columns.Length - 1);
             values = values.Substring(0, values.Length - 1);
             try
             {
-                AddNonQueryForOpenTransaction(String.Format("insert into {0}({1}) values({2});", tableName, columns, values));
+                //AddNonQueryForOpenTransaction(String.Format("insert into {0}({1}) values({2});", tableName, columns, values),data);
             }
             catch (Exception fail)
             {
@@ -324,17 +324,33 @@ namespace SaveCentral.SQLite
             }
             return returnCode;
         }
-        public int AddNonQueryForOpenTransaction(string sql)
+        public int AddNonQueryForOpenTransaction(String tableName, Dictionary<String, String> data)
         {
+            string sql="", columns = "", values = "";
             int rowsUpdated = 0;
+           
+            List<SQLiteParameter> prm = new List<SQLiteParameter>();
 
+            foreach (KeyValuePair<String, String> val in data)
+            {
+                //myCommandOpenCon.Parameters.Add(new SQLiteParameter("@" + val.Key.ToString(), val.Value));
+                prm.Add(new SQLiteParameter("@" + val.Key.ToString()) { Value = val.Value });
+                columns += String.Format(" {0},", val.Key.ToString());
+                values += String.Format("@{0},", val.Key.ToString());
+            }
+            columns = columns.Substring(0, columns.Length - 1);
+            values = values.Substring(0, values.Length - 1);
+            sql = String.Format("insert into {0}({1}) values({2});", tableName, columns, values);
             myCommandOpenCon.CommandText = sql;
+            myCommandOpenCon.CommandType = CommandType.Text;
+            myCommandOpenCon.Parameters.AddRange(prm.ToArray());
             try
             {
                 rowsUpdated = myCommandOpenCon.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
+                MessageBox.Show("The following error ocurred: " + ex.Message);
                 myTransactionOpenCon.Rollback();
                 myTransactionOpenCon.Dispose();
             }
