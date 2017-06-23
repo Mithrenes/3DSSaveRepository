@@ -40,6 +40,7 @@ namespace SaveCentral
         public MainWindow()
         {
             InitializeComponent();
+            AutoUpdaterDotNET.AutoUpdater.Start(Constants.URL + "/Updater.xml");
             Misc.Dir.DeleteDir(Constants.TempFolder + System.IO.Path.DirectorySeparatorChar + "TempSaves");
             Misc.Dir.DeleteDir(Constants.TempFolder + System.IO.Path.DirectorySeparatorChar + "TempDL");
             Misc.Utils.ChkIfUpgradeRequired();
@@ -585,14 +586,69 @@ namespace SaveCentral
                 isOtherProcRunning = false;
                 gridMyUploads.IsEnabled = true;
                 TabSaves.IsEnabled = true;
+            }           
+        }
+        private async void MenuItemUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            if (lbMyGameSaves.SelectedIndex == -1)
+            {
+                return;
             }
+            else
+            {
+                if (lbMyGameSaves.HasItems && lbMyGameSaves.SelectedIndex >= 0)
+                {
+                    if (!txtMUSaveTitle.Text.Equals(""))
+                    {
+                        if (!txtMUSaveDescription.Equals(""))
+                        {
+                            if (cmbMUSaveRegion.SelectedIndex >= 0)
+                            {
+                                isOtherProcRunning = true;
+                                gridMyUploads.IsEnabled = false;
+                                TabSaves.IsEnabled = false;
 
-            
+                                //AGREGAR FilePath = FTPitem.FullName, al listMyGameSaves (desde el ftp) para poder saber desde donde debo recobrar los archivos para hacer upload y luego update.
+                                listMyGameSaves[lbMyGameSaves.SelectedIndex].FilePath = await Mega.DownloadFilesAsyncForUpdate(listMyGameSaves[lbMyGameSaves.SelectedIndex].FileName, Constants.TempFolder, PBNotifyProgress, lblNotifyProgress);
+                                if (listMyGameSaves[lbMyGameSaves.SelectedIndex].FilePath != null && await FTP.DownloadFilesToLocal(txtDeviceIPAddress.Text, listMyGameSaves[lbMyGameSaves.SelectedIndex].FilePath, txtMUSaveTitle.Text, txtMUSaveDescription.Text, SaveRegionMySaves, null, txtMUHasExtData, PBNotifyProgress, lblNotifyProgress))
+                                {
+                                    DynamicControls.ResetUploadUI(txtMUSaveTitle, txtMUSaveDescription, cmbMUSaveRegion, txtMUHasExtData, lbMySaveSlotsInGameFolder, lbMyGameSaves);
+                                    await LoadSaves();
+                                }
+                                //Deleting TempFolder once the upload is done.
+                                Misc.Dir.DeleteDir(Constants.TempFolder + System.IO.Path.DirectorySeparatorChar + "TempSaves");
+                                gridMyUploads.IsEnabled = true;
+                                TabSaves.IsEnabled = true;
+                            }
+                            else
+                            {
+                                MessageBox.Show("Select the region for the save you are updating.");
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("You must write a description for the save you want to update. Say % of completion, achievements unlocket, etc...");
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("You must write a title for the save you want to update. Choose something brief and descriptive.");
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("You must select one save to update.");
+                }
+                isOtherProcRunning = false;
+                gridMyUploads.IsEnabled = true;
+                TabSaves.IsEnabled = true;
+            }
         }
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             UserSettings.RememberDeviceIP(chkRememberDeviceIP, txtDeviceIPAddress);
-
+            Misc.Dir.DeleteDir(Constants.TempFolder + System.IO.Path.DirectorySeparatorChar + "TempSaves");
+            Misc.Dir.DeleteDir(Constants.TempFolder + System.IO.Path.DirectorySeparatorChar + "TempDL");
             base.OnClosing(e);
         }
     }

@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using SaveCentral.SQLite;
 using System.Data;
 using SaveCentral.WebService;
+using System.Data.SQLite;
 
 namespace SaveCentral
 {
@@ -43,10 +44,13 @@ namespace SaveCentral
         }
         public static async Task<List<ListBoxItems>> GetAllSavesForCurrentUser(string Username)
         {
+            List<SQLiteParameter> prm = new List<SQLiteParameter>();
             List<ListBoxItems> LBI = new List<ListBoxItems>();
             SQLiteHelper db = new SQLiteHelper();
-            string query = "SELECT Username, FileName, GameName, SaveType, Region, Size, Title, Description, FilesIncluded, HasExtData, DLCount, Date_Created, Date_Modif FROM " + Constants.files_data + " WHERE Username = '" + Username + "'";
-            DataTable dt = await Task.Run(() => db.GetDataTable(query));
+            string query = "SELECT Username, FileName, GameName, SaveType, Region, Size, Title, Description, FilesIncluded, HasExtData, DLCount, Date_Created, Date_Modif FROM " + Constants.files_data + 
+                            " WHERE Username = @Username ORDER BY GameName";
+            prm.Add(new SQLiteParameter("@Username") { Value = Username });
+            DataTable dt = await Task.Run(() => db.GetDataTable(query,prm));
             await Task.Run(() =>
             {
                 foreach (DataRow dr in dt.Rows)
@@ -76,8 +80,8 @@ namespace SaveCentral
         {
             List<ListBoxItems> LBI = new List<ListBoxItems>();
             SQLiteHelper db = new SQLiteHelper();
-            string query = "SELECT Username, FileName, GameName, SaveType, Region, Size, Title, Description, FilesIncluded, HasExtData, DLCount, Date_Created, Date_Modif FROM " + Constants.files_data;
-            DataTable dt = await Task.Run(() => db.GetDataTable(query));
+            string query = "SELECT Username, FileName, GameName, SaveType, Region, Size, Title, Description, FilesIncluded, HasExtData, DLCount, Date_Created, Date_Modif FROM " + Constants.files_data + " ORDER BY GameName";
+            DataTable dt = await Task.Run(() => db.GetDataTable(query,null));
             await Task.Run(() =>
             {
                 foreach (DataRow dr in dt.Rows)
@@ -106,12 +110,16 @@ namespace SaveCentral
 
         public static async Task<List<ListBoxItems>> GetFilesIncludedFromLocalDB(string Username, string FileName, TextBox Title, TextBox Description, ComboBox Region, TextBox SaveType, TextBox HasExtData, TextBox DLCount, TextBox Uploader)
         {
+            List<SQLiteParameter> prm = new List<SQLiteParameter>();
             List<ListBoxItems> ListitemsIncluded = new List<ListBoxItems>();
             DataTable dt;
             SQLiteHelper db = new SQLiteHelper();
+
             string query = "SELECT FilesIncluded, Title, Description, Region, SaveType, HasExtData, DLCount FROM " + Constants.files_data +
-                           " WHERE Username = '" + Username + "' AND FileName = '" + FileName + "'";
-            dt = await Task.Run(() => db.GetDataTable(query));
+                           " WHERE Username = @Username AND FileName = @FileName";
+            prm.Add(new SQLiteParameter("@Username") { Value = Username });
+            prm.Add(new SQLiteParameter("@FileName") { Value = FileName });
+            dt = await Task.Run(() => db.GetDataTable(query, prm));
             List<string> FilesIncluded = dt.Rows[0].ItemArray[0].ToString().Split('|').ToList<string>();
             foreach (string File in FilesIncluded)
             {
@@ -173,6 +181,7 @@ namespace SaveCentral
 
         public static async Task<List<ListBoxItems>> LoadWithFilter(string RegionSel, string txtFilterSearch)
         {
+            List<SQLiteParameter> prm = new List<SQLiteParameter>();
             RegionSel = GetDeviceRegion(RegionSel);
             List<ListBoxItems> LBI = new List<ListBoxItems>();
             SQLiteHelper db = new SQLiteHelper();
@@ -181,27 +190,34 @@ namespace SaveCentral
             {
                 if (!txtFilterSearch.Equals(""))
                 {
-                    query = "SELECT Username, FileName, GameName, SaveType, Region, Size, Title, Description, FilesIncluded, HasExtData, DLCount, Date_Created, Date_Modif FROM " + Constants.files_data + " WHERE Region = '" + RegionSel + "' AND Title LIKE '%"+ txtFilterSearch +"%'";
+                    query = "SELECT Username, FileName, GameName, SaveType, Region, Size, Title, Description, FilesIncluded, HasExtData, DLCount, Date_Created, Date_Modif FROM " + Constants.files_data + 
+                            " WHERE Region = '" + RegionSel + "' AND Title LIKE '%'+@FilterSearch+'%' ORDER BY GameName";
+                    prm.Add(new SQLiteParameter("@FilterSearch") { Value = txtFilterSearch });
                 }
                 else
                 {
-                    query = "SELECT Username, FileName, GameName, SaveType, Region, Size, Title, Description, FilesIncluded, HasExtData, DLCount, Date_Created, Date_Modif FROM " + Constants.files_data + " WHERE Region = '" + RegionSel + "'";
+                    query = "SELECT Username, FileName, GameName, SaveType, Region, Size, Title, Description, FilesIncluded, HasExtData, DLCount, Date_Created, Date_Modif FROM " + Constants.files_data + " WHERE Region = '" + RegionSel + "' ORDER BY GameName";
+                    prm = null;
                 }
                 
             }else if (RegionSel.Equals(""))
             {
                 if (!txtFilterSearch.Equals(""))
                 {
-                    query = "SELECT Username, FileName, GameName, SaveType, Region, Size, Title, Description, FilesIncluded, HasExtData, DLCount, Date_Created, Date_Modif FROM " + Constants.files_data + " WHERE Title LIKE '%" + txtFilterSearch + "%'";
+                    query = "SELECT Username, FileName, GameName, SaveType, Region, Size, Title, Description, FilesIncluded, HasExtData, DLCount, Date_Created, Date_Modif FROM " + Constants.files_data +
+                            " WHERE Title LIKE '%'+@FilterSearch+'%' ORDER BY GameName";
+                    prm.Add(new SQLiteParameter("@FilterSearch") { Value = txtFilterSearch });
+
                 }
                 else
                 {
-                    query = "SELECT Username, FileName, GameName, SaveType, Region, Size, Title, Description, FilesIncluded, HasExtData, DLCount, Date_Created, Date_Modif FROM " + Constants.files_data;
+                    query = "SELECT Username, FileName, GameName, SaveType, Region, Size, Title, Description, FilesIncluded, HasExtData, DLCount, Date_Created, Date_Modif FROM " + Constants.files_data + " ORDER BY GameName";
+                    prm = null;
                 }
                 
             }
             
-            DataTable dt = await Task.Run(() => db.GetDataTable(query));
+            DataTable dt = await Task.Run(() => db.GetDataTable(query,prm));
 
             await Task.Run(() =>
             {

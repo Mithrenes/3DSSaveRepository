@@ -209,6 +209,74 @@ namespace SaveCentral.WebService
                 return b;
             }
         }
+        public static async Task<string> DownloadFilesAsyncForUpdate(string FileName, string PathToDownload, ProgressBar PB, Label LBL)
+        {
+            string filepath = null;
+            try
+            {
+                char separator = Path.DirectorySeparatorChar;
+                string DirToDownload = PathToDownload + "TempDL";
+                Directory.CreateDirectory(DirToDownload);
+                //MessageBox.Show(lbitemsToDownload[lbFilesToDownload.SelectedIndex].FileName + " " + lbitemsToDownload[lbFilesToDownload.SelectedIndex].NomUser);
+                string DLink = await Download.GetDLinkFromWeb(FileName);
+                if (DLink.Equals(""))
+                {
+                    PB.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => { UpdateMessages.DownloadMsg(101, PB, LBL); }));
+                    MessageBox.Show("Could not get download link. Please try again. If the problem persists report it.");
+                    PB.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => { UpdateMessages.DownloadMsg(103, PB, LBL); }));
+                    return filepath;
+                }
+                else
+                {
+                    PB.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => { UpdateMessages.DownloadMsg(0, PB, LBL); }));
+                    
+                    MegaApiClient client = new MegaApiClient();
+                    client.LoginAnonymous();
+                    Progress<double> ze = new Progress<double>(p => PB.Dispatcher.Invoke(DispatcherPriority.Normal,
+                                                                        new Action(() =>
+                                                                        {
+                                                                            UpdateMessages.DownloadMsg((int)p, PB, LBL);
+                                                                        })));
+                    await client.DownloadFileAsync(new Uri(DLink), DirToDownload + separator + FileName, ze);
+                    ZipFile.ExtractToDirectory(DirToDownload + separator + FileName, DirToDownload);
+                    File.Delete(DirToDownload + separator + FileName);
+                    PB.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => { UpdateMessages.DownloadMsg(104, PB, LBL); }));
+                   
+                    GC.Collect(); // TENGO QUE LLAMAR ESTO O NO DEJA BORRAR EL ARCHIVO ZIP PORQUE DICE QUE AUN ESTA EN USO.                            
+                    client.Logout();
+                    string[] subdirectoryEntries = Directory.GetDirectories(DirToDownload + separator + "JKSV"); //With this I get Saves and ExtData (if it exists)
+                    int count = 0;
+                    foreach (string st in subdirectoryEntries)
+                    {
+                        string[] subdirectoryEntrieslv2 = Directory.GetDirectories(st); //Here I get game name
+                        foreach (string st2 in subdirectoryEntrieslv2)
+                        {
+                            string[] subdirectoryEntrieslv3 = Directory.GetDirectories(st2); //Here I get gslot name
+                            foreach (string st3 in subdirectoryEntrieslv3)
+                            {
+                                if (st3.Contains("Saves") && !st3.Contains("ExtData"))
+                                {
+                                    filepath = st3.Substring(st3.IndexOf("JKSV") - 1);
+                                }
+                            }
+                        }                       
+                        count++; //If this is 2 then it means the save hast ExtData folder
+                    }
+                    
+                    Misc.Dir.DeleteDir(Constants.TempFolder + System.IO.Path.DirectorySeparatorChar + "TempDL");
+                    PB.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => { UpdateMessages.DownloadMsg(103, PB, LBL); }));
+                    return filepath;
+                }
+
+            }
+            catch (Exception e)
+            {
+                UpdateMessages.DownloadMsg(102, PB, LBL);
+                MessageBox.Show("Save could not be downloaded due to the following error: " + e.Message);
+                UpdateMessages.DownloadMsg(103, PB, LBL);
+                return null;
+            }
+        }
         /// <summary>
         /// Generates a JSON file with login encrypted data to use with Mega Api
         /// </summary>

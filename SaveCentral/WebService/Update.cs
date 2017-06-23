@@ -125,5 +125,62 @@ namespace SaveCentral.WebService
                 return false;
             }
         }
+        public static async Task<bool> UpdateSaveFromFTP(SavesClass SV, ProgressBar PB, Label LBL)
+        {
+            SavesContainer SVC = new SavesContainer();
+            try
+            {
+                SV.IsUpdate = "1";
+                string SV_obj = "";
+                SV_obj = SV_obj + JsonConvert.SerializeObject(SV, Formatting.Indented);
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(new Uri(Constants.URL + "/api.savecentral.com/v1/files_data/" + WebUtility.UrlEncode(SV.FileName)));
+                request.Accept = "application/json";
+                request.ContentType = "application/json";
+                request.Headers.Add("authorization", Constants.ApiKey);
+                request.Method = "POST";
+                request.KeepAlive = true;
+                byte[] byteArray = Encoding.UTF8.GetBytes(SV_obj);
+                request.ContentLength = byteArray.Length;
+                using (Stream DataStream = await request.GetRequestStreamAsync())
+                {
+                    DataStream.Write(byteArray, 0, byteArray.Length);
+                    DataStream.Close();
+
+                    using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
+                    {
+                        using (Stream ResponseStream = response.GetResponseStream())
+                        {
+                            using (StreamReader sr = new StreamReader(ResponseStream))
+                            {
+                                string ServerResponse = await sr.ReadToEndAsync();
+                                SVC = JsonConvert.DeserializeObject<SavesContainer>(ServerResponse);
+                                if (SVC.status.Equals("1"))
+                                {
+                                    //Success
+                                    MessageBox.Show(SVC.message);
+                                    UpdateMessages.UpdateMsg(103, PB, LBL);
+                                    return true;
+                                }
+                                else
+                                {
+                                    //Fail   
+                                    await Delete.DeleteSelSave(SV, PB, LBL);
+                                    MessageBox.Show(SVC.message);
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                await Delete.DeleteSelSave(SV, PB, LBL);
+                MessageBox.Show("The save info could no be updated due to the following error: " + e.Message + System.Environment.NewLine + "Please try again later.");
+                return false;
+            }
+
+        }
+
     }
 }

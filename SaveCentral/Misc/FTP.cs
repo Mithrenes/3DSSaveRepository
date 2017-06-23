@@ -31,8 +31,9 @@ namespace SaveCentral
                     return client.GetListing(FolderPath);
                 }
             }
-            catch
+            catch (Exception e)
             {
+                MessageBox.Show("Could not connect to FTP due to the following error: " + e.Message);
                 return null;
             }           
         }
@@ -157,16 +158,29 @@ namespace SaveCentral
                         SV.Description = SaveDescription;
                         SV.FilesIncluded = FilesIncluded;
                         SV.HasExtData = HasExtData.ToString();
-                        if(await Insert.InsertNewSave(SV, PB, LBL))
+
+                        if (SaveType != null)
                         {
-                            return true;
+                            if (await Insert.InsertNewSave(SV, PB, LBL))
+                            {
+                                return true;
+                            }
                         }
+                        else
+                        {
+                            if (await Update.UpdateSaveFromFTP(SV, PB, LBL))
+                            {
+                                return true;
+                            }
+                        }
+                        
                     }                 
                 }
                 return false;
             }
-            catch
+            catch (Exception e)
             {
+                MessageBox.Show("Could not complete the operation due to the following error: " + e.Message);
                 return false;
                 // null;
             }

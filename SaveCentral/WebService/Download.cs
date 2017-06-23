@@ -4,6 +4,7 @@ using SaveCentral.SQLite;
 using SaveCentral.UIControls;
 using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -43,6 +44,7 @@ namespace SaveCentral.WebService
                                 {
                                     foreach (var saves in SVC.Saves)
                                     {
+                                        
                                         Dictionary<string, string> Values = new Dictionary<string, string>();
                                         Values.Add(ColNames[0], saves.Username);
                                         Values.Add(ColNames[1], saves.FileName);
@@ -58,7 +60,7 @@ namespace SaveCentral.WebService
                                         Values.Add(ColNames[11], saves.Date_Created);
                                         Values.Add(ColNames[12], saves.Date_Modif);
                                        
-                                        db.InsertUsingTransacAndOpenCon(Constants.files_data, Values);
+                                        db.AddNonQueryForOpenTransaction(Constants.files_data, Values);
                                     }
                                     db.CloseNonQueryTransaction();
                                 }
@@ -151,8 +153,10 @@ namespace SaveCentral.WebService
                                 {
                                     await Task.Run(() => {
                                         Dictionary<string, string> Values = new Dictionary<string, string>();
+                                        List<SQLiteParameter> prm = new List<SQLiteParameter>();
+                                        prm.Add(new SQLiteParameter("@FileName") { Value = FileName });
                                         Values.Add(ColNames[10], save.DLCount);
-                                        db.Update(Constants.files_data, Values, "FileName = '" + FileName + "'");
+                                        db.Update(Constants.files_data, Values, "FileName = @FileName", prm);
                                     });
                                     return save.DLCount;
                                 }
