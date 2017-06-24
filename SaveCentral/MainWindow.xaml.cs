@@ -159,7 +159,7 @@ namespace SaveCentral
         {
             if (cmbFilterSaveByRegion.SelectedIndex >=0)
             {
-                listGameSavesToDownload = await DynamicControls.LoadWithFilter(cmbFilterSaveByRegion.SelectedValue.ToString(), txtFilterSearch.Text, cmbFilterJumpToLetter.Text.ToString());
+                listGameSavesToDownload = await DynamicControls.LoadWithFilter(cmbFilterSaveByRegion.SelectedValue.ToString(), txtFilterSearch.Text, cmbFilterJumpToLetter.SelectedValue.ToString());
                 lbGameSavesToDownload.ItemsSource = listGameSavesToDownload;
                 lbGameSavesToDownload.Items.Refresh();
                 DynamicControls.ResetUpdateAndDLUI(txtDLSaveTitle, txtDLSaveDescription, cmbDLSaveRegion, txtDLSaveType, txtDLHasExtData, txtDLCount, txtDLUploader, lbFilesIncludedInDownload);
@@ -167,31 +167,24 @@ namespace SaveCentral
         }
         private async void cmbFilterJumpToLetter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cmbFilterJumpToLetter.SelectedIndex >=0)
+            string SelValue = "";
+            if (cmbFilterSaveByRegion.SelectedIndex >= 0)
             {
-                string SelValue = "";
-                if (cmbFilterSaveByRegion.SelectedIndex >= 0)
-                {
-                    SelValue = cmbFilterSaveByRegion.SelectedValue.ToString();
-                }
-                listGameSavesToDownload = await DynamicControls.LoadWithFilter(SelValue, "" , cmbFilterJumpToLetter.Text);
-                lbGameSavesToDownload.ItemsSource = listGameSavesToDownload;
-                lbGameSavesToDownload.Items.Refresh();
-                DynamicControls.ResetUpdateAndDLUI(txtDLSaveTitle, txtDLSaveDescription, cmbDLSaveRegion, txtDLSaveType, txtDLHasExtData, txtDLCount, txtDLUploader, lbFilesIncludedInDownload);
+                SelValue = cmbFilterSaveByRegion.SelectedValue.ToString();
             }
+            if (cmbFilterJumpToLetter.SelectedIndex >= 0)
+            {                
+                listGameSavesToDownload = await DynamicControls.LoadWithFilter(SelValue, "", cmbFilterJumpToLetter.SelectedValue.ToString());               
+            }
+            else
+            {              
+                listGameSavesToDownload = await DynamicControls.LoadWithFilter(SelValue, "", "");               
+            }
+            lbGameSavesToDownload.ItemsSource = listGameSavesToDownload;
+            lbGameSavesToDownload.Items.Refresh();
+            DynamicControls.ResetUpdateAndDLUI(txtDLSaveTitle, txtDLSaveDescription, cmbDLSaveRegion, txtDLSaveType, txtDLHasExtData, txtDLCount, txtDLUploader, lbFilesIncludedInDownload);
         }
-        private async void cmbFilterJumpToLetter_TextChanged(object sender, TextChangedEventArgs e)
-        {
-                string SelValue = "";
-                if (cmbFilterSaveByRegion.SelectedIndex >= 0)
-                {
-                    SelValue = cmbFilterSaveByRegion.SelectedValue.ToString();
-                }
-                listGameSavesToDownload = await DynamicControls.LoadWithFilter(SelValue, "", cmbFilterJumpToLetter.Text);
-                lbGameSavesToDownload.ItemsSource = listGameSavesToDownload;
-                lbGameSavesToDownload.Items.Refresh();
-                DynamicControls.ResetUpdateAndDLUI(txtDLSaveTitle, txtDLSaveDescription, cmbDLSaveRegion, txtDLSaveType, txtDLHasExtData, txtDLCount, txtDLUploader, lbFilesIncludedInDownload);
-        }
+       
         private void cmbFilterJumpToLetter_Loaded(object sender, RoutedEventArgs e)
         {
             var obj = (ComboBox)sender;
