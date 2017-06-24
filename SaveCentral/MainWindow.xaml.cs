@@ -157,13 +157,18 @@ namespace SaveCentral
 
         private async void cmbFilterSaveByRegion_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (cmbFilterSaveByRegion.SelectedIndex >=0)
+            string JTL = "";
+            if (cmbFilterJumpToLetter.SelectedIndex >= 0)
             {
-                listGameSavesToDownload = await DynamicControls.LoadWithFilter(cmbFilterSaveByRegion.SelectedValue.ToString(), txtFilterSearch.Text, cmbFilterJumpToLetter.SelectedValue.ToString());
-                lbGameSavesToDownload.ItemsSource = listGameSavesToDownload;
-                lbGameSavesToDownload.Items.Refresh();
-                DynamicControls.ResetUpdateAndDLUI(txtDLSaveTitle, txtDLSaveDescription, cmbDLSaveRegion, txtDLSaveType, txtDLHasExtData, txtDLCount, txtDLUploader, lbFilesIncludedInDownload);
-            }           
+                JTL = cmbFilterJumpToLetter.SelectedValue.ToString();
+            }          
+                if (cmbFilterSaveByRegion.SelectedIndex >= 0)
+                {
+                    listGameSavesToDownload = await DynamicControls.LoadWithFilter(cmbFilterSaveByRegion.SelectedValue.ToString(), txtFilterSearch.Text, JTL);
+                    lbGameSavesToDownload.ItemsSource = listGameSavesToDownload;
+                    lbGameSavesToDownload.Items.Refresh();
+                    DynamicControls.ResetUpdateAndDLUI(txtDLSaveTitle, txtDLSaveDescription, cmbDLSaveRegion, txtDLSaveType, txtDLHasExtData, txtDLCount, txtDLUploader, lbFilesIncludedInDownload);
+                }                                        
         }
         private async void cmbFilterJumpToLetter_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -195,7 +200,7 @@ namespace SaveCentral
                 {
                     myTextBox.MaxLength = 1;
                 }
-            }
+            } 
         }
         private async void txtFilterSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
