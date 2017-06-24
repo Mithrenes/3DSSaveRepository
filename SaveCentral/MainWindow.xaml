@@ -54,7 +54,7 @@
                                 <RowDefinition Height="Auto"></RowDefinition>
                                 <RowDefinition Height="*"></RowDefinition>
                             </Grid.RowDefinitions>
-                            <Grid VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" >
+                            <Grid VerticalAlignment="Top" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
@@ -65,6 +65,7 @@
                                                 <RowDefinition Height="Auto"></RowDefinition>
                                             </Grid.RowDefinitions>
                                             <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
@@ -85,6 +86,18 @@
                                                 </ComboBox>
                                             </Grid>
                                             <Grid Grid.Column="1" Grid.Row="0">
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"></RowDefinition>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Label  Content="Jump to letter:" Padding="0,0,0,0" Margin="5,0,10,0" Grid.Row="0" Grid.Column="0" Height="20" />
+                                                <ComboBox x:Name="cmbFilterJumpToLetter" Width="40" IsEditable="True" Grid.Row="0" Grid.Column="1"  SelectedValuePath="Content" Padding="5,0,0,0" SelectionChanged="cmbFilterJumpToLetter_SelectionChanged" Margin="0,0,1,0" Height="20" VerticalAlignment="Top" Loaded="cmbFilterJumpToLetter_Loaded" TextBoxBase.TextChanged="cmbFilterJumpToLetter_TextChanged">
+                                                </ComboBox>
+                                            </Grid>
+                                            <Grid Grid.Column="2" Grid.Row="0">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto"></RowDefinition>
                                                 </Grid.RowDefinitions>
@@ -312,6 +325,7 @@
                                             <TextBox x:Name="txtHasExtData" Margin="5,0,5,0" IsReadOnly="True" VerticalContentAlignment="Center"/>
                                         </UniformGrid>
                                         <Button x:Name="btnUploadSave" Click="btnUploadSave_Click" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Content="Upload Save" Height="40" Margin="5,20,5,0" />
+
                                     </Grid>
                                 </StackPanel>
                             </Grid >
@@ -339,7 +353,7 @@
                                 <ListBox Name="lbMyGameSaves"  HorizontalContentAlignment="Stretch" Panel.ZIndex="3" SelectionChanged="lbMyGameSaves_SelChanged" Margin="5,0,0,0" Grid.Row="1" Grid.Column="0"  >
                                     <ListBox.ToolTip>
                                         <ToolTip>
-                                            <TextBlock Text="Right click to delete." />
+                                            <TextBlock Text="Right click to update/delete." />
                                         </ToolTip>
                                     </ListBox.ToolTip>
                                     <ListBox.Resources>
@@ -434,7 +448,11 @@
                                             <Label Content="Has ExtData?: " />
                                             <TextBox x:Name="txtMUHasExtData" Margin="5,0,5,0" IsReadOnly="True" VerticalContentAlignment="Center"/>
                                         </UniformGrid>
-                                        <Button x:Name="btnUpdateMySaves" Click="btnUpdateMySaves_Click" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Content="Update Info" Height="40" Margin="5,20,5,0" />
+                                        <Button x:Name="btnUpdateMySaves" Click="btnUpdateMySaves_Click" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Content="Update Info" Height="40" Margin="5,20,5,0">
+                                            <Button.ToolTip>
+                                                <ToolTip>This only updates text (Title, description, etc). To update the actual save's content right click the save and select update from FTP.</ToolTip>
+                                            </Button.ToolTip>
+                                        </Button>
                                     </Grid>
                                 </StackPanel>
                             </Grid >

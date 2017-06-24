@@ -39,7 +39,7 @@ namespace SaveCentral
         List<ListBoxItems> listGSToDownloadFilesIncluded = new List<ListBoxItems>();
         public MainWindow()
         {
-            InitializeComponent();
+            InitializeComponent();           
             AutoUpdaterDotNET.AutoUpdater.Start(Constants.URL + "/Updater.xml");
             Misc.Dir.DeleteDir(Constants.TempFolder + System.IO.Path.DirectorySeparatorChar + "TempSaves");
             Misc.Dir.DeleteDir(Constants.TempFolder + System.IO.Path.DirectorySeparatorChar + "TempDL");
@@ -67,8 +67,7 @@ namespace SaveCentral
             else
             {
                 chkRememberDeviceIP.IsChecked = false;
-            }
-            
+            }           
         }
         private async Task<bool> LoadSaves()
         {
@@ -94,6 +93,9 @@ namespace SaveCentral
             listGameSavesToDownload = await DynamicControls.GetAllSaves();
             lbGameSavesToDownload.ItemsSource = listGameSavesToDownload;
             lbGameSavesToDownload.Items.Refresh();
+            cmbFilterJumpToLetter.ItemsSource = (await DynamicControls.GetAllSavesFirstLetter()).DefaultView;
+            cmbFilterJumpToLetter.DisplayMemberPath = "GameName";
+            cmbFilterJumpToLetter.SelectedValuePath = "GameName";
         }
         private async Task RefreshLB()
         {
@@ -157,11 +159,50 @@ namespace SaveCentral
         {
             if (cmbFilterSaveByRegion.SelectedIndex >=0)
             {
-                listGameSavesToDownload = await DynamicControls.LoadWithFilter(cmbFilterSaveByRegion.SelectedValue.ToString(), txtFilterSearch.Text);
+                listGameSavesToDownload = await DynamicControls.LoadWithFilter(cmbFilterSaveByRegion.SelectedValue.ToString(), txtFilterSearch.Text, cmbFilterJumpToLetter.Text.ToString());
                 lbGameSavesToDownload.ItemsSource = listGameSavesToDownload;
                 lbGameSavesToDownload.Items.Refresh();
                 DynamicControls.ResetUpdateAndDLUI(txtDLSaveTitle, txtDLSaveDescription, cmbDLSaveRegion, txtDLSaveType, txtDLHasExtData, txtDLCount, txtDLUploader, lbFilesIncludedInDownload);
             }           
+        }
+        private async void cmbFilterJumpToLetter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cmbFilterJumpToLetter.SelectedIndex >=0)
+            {
+                string SelValue = "";
+                if (cmbFilterSaveByRegion.SelectedIndex >= 0)
+                {
+                    SelValue = cmbFilterSaveByRegion.SelectedValue.ToString();
+                }
+                listGameSavesToDownload = await DynamicControls.LoadWithFilter(SelValue, "" , cmbFilterJumpToLetter.Text);
+                lbGameSavesToDownload.ItemsSource = listGameSavesToDownload;
+                lbGameSavesToDownload.Items.Refresh();
+                DynamicControls.ResetUpdateAndDLUI(txtDLSaveTitle, txtDLSaveDescription, cmbDLSaveRegion, txtDLSaveType, txtDLHasExtData, txtDLCount, txtDLUploader, lbFilesIncludedInDownload);
+            }
+        }
+        private async void cmbFilterJumpToLetter_TextChanged(object sender, TextChangedEventArgs e)
+        {
+                string SelValue = "";
+                if (cmbFilterSaveByRegion.SelectedIndex >= 0)
+                {
+                    SelValue = cmbFilterSaveByRegion.SelectedValue.ToString();
+                }
+                listGameSavesToDownload = await DynamicControls.LoadWithFilter(SelValue, "", cmbFilterJumpToLetter.Text);
+                lbGameSavesToDownload.ItemsSource = listGameSavesToDownload;
+                lbGameSavesToDownload.Items.Refresh();
+                DynamicControls.ResetUpdateAndDLUI(txtDLSaveTitle, txtDLSaveDescription, cmbDLSaveRegion, txtDLSaveType, txtDLHasExtData, txtDLCount, txtDLUploader, lbFilesIncludedInDownload);
+        }
+        private void cmbFilterJumpToLetter_Loaded(object sender, RoutedEventArgs e)
+        {
+            var obj = (ComboBox)sender;
+            if (obj != null)
+            {
+                var myTextBox = (TextBox)obj.Template.FindName("PART_EditableTextBox", obj);
+                if (myTextBox != null)
+                {
+                    myTextBox.MaxLength = 1;
+                }
+            }
         }
         private async void txtFilterSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
